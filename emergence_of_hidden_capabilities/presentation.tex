@@ -1,0 +1,311 @@
+\input{theme}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{wasysym}
+\usepackage{ulem}
+\usepackage{multirow}
+
+
+\graphicspath{{images/}}
+
+\title{Emergence of Hidden Capabilities: Exploring Learning Dynamics in Concept Space}
+
+\subtitle{Park et al. NeurIPS 2024 Spotlight}
+
+\institute{University of Athens}
+\date{CV \& Robotics reading group \\ 10 February 2025\vspace{6pt}}
+
+\newcommand{\yes}{\CIRCLE}
+\newcommand{\no}{\Circle}
+\newcommand{\partially}{\LEFTcircle}
+
+\setbeamertemplate{section in toc}[sections numbered]
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \begin{textblock*}{0.9\paperwidth} (0.05\paperwidth,0pt)
+        \tableofcontents[currentsection]
+    \end{textblock*}
+  \end{frame}
+}
+
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage{}
+\end{frame}
+
+\begin{frame}[t]{Learning Dynamics of Generative Models}
+    \begin{textblock*}{\paperwidth} (0.15\paperwidth, 40pt)
+        Generative models are able to \textbf{generalize} out-of-distribution (OOD)\\ and combine \textbf{concepts} in novel ways, not seen during training, by:
+        \begin{itemize}
+        \item internalizing data-generating process
+        \item disentangling concepts (latent factors of variation) underlying it
+    \end{itemize}
+
+        \vspace{0.8cm}
+
+        \textbf{Q:} What determines whether the model will disentangle a concept \\and learn to manipulate it? Are all concepts learned at the same time?
+   \end{textblock*}
+\end{frame}
+
+\begin{frame}[t]{Problem Setting}
+% \begin{textblock*}{\paperwidth} (0.15\paperwidth, 40pt)
+ \qquad \textbf{Class of interest:} A generative model $F$, trained
+using \\\qquad conditioning information $h$ to produce images $y$
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/figure_1.png}
+\end{figure}
+% \end{textblock*}
+\end{frame}
+
+\begin{frame}[t]{Contributions}
+     \begin{itemize}
+        \item<1-3>Introduce \textit{Concept Space} to analyze a model’s learning
+        \item<2-3>Show that \textit{Concept Signal} dictates the order of concept learning
+        \item<3-3>Learning of concepts happens in two phases:
+        \begin{itemize}
+            \item (P1) learning of a hidden capability
+            \item (P2) learning to generate the desired output from the input space
+        \end{itemize}
+     \end{itemize}
+\end{frame}
+
+% Hypothesis: generative models
+% possess latent capabilities that are learned suddenly and consistently during training, but these
+% capabilities are not immediately apparent since prompting the model via the input space may not elicit
+% them
+
+\begin{frame}[t]{Concept Space}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.77\linewidth]{figures/concept_space_def.png}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.38\linewidth]{figures/concept_space.png}
+\end{figure}
+\end{frame}
+
+% using
+% a mixing function M that yields conditioning information h := M(z), we can train a conditional
+% generative model
+
+\begin{frame}[t]{On Capability}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.77\linewidth]{figures/capability_def.png}
+\end{figure}
+
+\begin{itemize}
+    \item we do not need to use the conditioning $h$ used for training
+    \item other techniques can be used (over-prompting, latent interventions)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Concept Signal}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.77\linewidth]{figures/concept_signal_def.png}
+    \end{figure}
+    \quad Intuitively, concept signal indicates how much the model would benefit from learning a concept
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.49\linewidth]{figures/figure_2_concet_signal.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Experimental Setup}
+\quad \textbf{Models:}
+\begin{itemize}
+    \item Variational Diffusion Model [1]
+    \item Generate 3×32×32 (\& 3×64×64) images conditioned on $h$
+\end{itemize}
+
+\quad \textbf{Datasets:}
+\begin{itemize}
+    \item Synthetic toy 2D objects with controlled concepts
+    \item CelebA
+\end{itemize}
+
+\quad \textbf{Evaluation:}
+\begin{itemize}
+    \item Classifier probes for individual concepts (U-Net)
+    \item Using same training set
+\end{itemize}
+\end{frame}
+
+% Evaluation Metric. To assess whether a generated image matches the desired concept class without
+% human intervention, we follow literature on disentangled representation learning and train classifier probes for individual concepts using the diffusion model’s training data.
+% U-Net [95] followed by an average pooling layer and n MLP
+% classification heads for the n concept variables
+
+\begin{frame}[t]{Concept Signal Determines Learning Speed}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+    \item Changing the level of concept signal in the training data
+    \item $h := z$
+    \item speed of learning: inverse of the number of gradient steps required to reach 80\% accuracy on OOD class
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/figure_3_speed.png}
+\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Concept Signal Governs Generalization Dynamics}
+\begin{columns}
+\column{0.4\textwidth}
+\begin{itemize}
+    \item Concept memorization: OOD generations biased towards class with strongest concept signal
+    \item Problem when early stopping text-to-image models
+    \item Unseen conditioning associated to nearest concept class
+\end{itemize}
+\column{0.6\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/figure_4.png}
+\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Landscape Theory of Learning Dynamics}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+    \item There is a sudden turn from concept memorization to OOD generalization
+    \item Learning dynamics can be decomposed into two stages
+    \item \textit{Hypothesis:} there is a phase change, in which the model learns to alter concepts
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/figure_5.png}
+\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Sudden Transitions in Learning Dynamics}
+\begin{itemize}
+    \item There is a phase in which the model is capable of disentangling concepts, but still produces incorrect images
+    \item Naive input prompting is insufficient to elicit these capabilities and generate samples from \\OOD classes
+    \item Second phase in learning dynamics: an
+alignment between the input space and concept representations is learned
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Different Guidance Scales}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.92\linewidth]{figures/cfg.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}[t]{Techniques to elicit hidden capabilities}
+\begin{enumerate}
+    \item \textbf{Activation Space:} \textit{Linear Latent Intervention}
+    \item \textbf{Input Space:} \textit{Overprompting}
+\end{enumerate}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/figure_6.png}
+\end{figure}
+\end{frame}
+
+% Two techniques: \textit{figure_6}
+% 1. Activation Space: Linear Latent Intervention. Given conditioning vectors h, during inference
+% we add or subtract components that correspond to specific concepts (e.g., hblue ).
+% 2. Input Space: Overprompting. We simply enhance the color conditioning to values of higher
+% magnitude, e.g. (r, g, b) = (0.4, 0.4, 0.6) to (0.3, 0.3, 0.7).
+
+% the model can consistently elicit the desired outputs much earlier than input prompting
+% approximately the same number of gradient steps, irrespective of the seed, and that this is precisely
+% the point of sudden turn in the learning dynamics in Fig. 4!
+
+\begin{frame}[t]{Patching Embeddings}
+\begin{enumerate}
+    \item Take the embedding module from final checkpoint
+    \item Patch it to an intermediate U-Net checkpoint
+    \item Naive prompting works as well as previous techniques
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/patching.png}
+\end{figure}
+\begin{itemize}
+    \item \textit{Second phase aligns input space to intermediate representations}
+    \item \textit{Embedding module disentangles concepts}
+    \item \textit{U-Net generates a representation for each}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Results on CelebA}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/celeba.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}[t]{Effect of Underspecification}
+\qquad In the previous experiments $h := z$, \textit{what if not?}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/figure_9.png}
+    \caption{Images of a strawberry are
+often correlated with the color red}
+\end{figure}
+\begin{itemize}
+    \item Simulate underspecification by randomly masking (e.g. \sout{red} triangle)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Underspecification hinders OOD generalization}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/figure_10.png}
+\end{figure}
+\qquad When prompts are masked, the model’s understanding of shape triangle becomes intertwined
+\\ \qquad
+with color red, \textbf{even when blue is specified}
+\end{frame}
+
+\begin{frame}[t]{Overprompting and Underspecification}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.65\linewidth]{figures/figure_11.png}
+\end{figure}
+\qquad Capability can develop prior to observable
+behavior, \\ \qquad even in cases of underspecification.
+\end{frame}
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Concept Space may be useful to understand learning in generative models
+        \item Concept Signal Dictates Speed of Learning
+        \item Generative models learn to manipulate concepts earlier than exhibited
+    \end{itemize}
+
+\quad \textbf{Limitations:}
+\begin{itemize}
+    \item Real-world data are more complex (not always compositional)
+    \item Concepts are not always linearly embedded in the vector space $\mathcal{Z}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{References}
+    [1] Diederik P. Kingma, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models, NeurIPS 2021
+    \hfill \break
+\end{frame}
+
+\end{document}

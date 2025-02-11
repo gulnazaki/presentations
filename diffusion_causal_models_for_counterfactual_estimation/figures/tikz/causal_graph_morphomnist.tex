@@ -1,0 +1,17 @@
+\documentclass{standalone}
+\usepackage{tikz}
+
+\begin{document}
+\begin{tikzpicture}[node distance={15mm}, thick, main/.style = {draw, circle}]
+    \node[main] (1) {$t$};
+    \node[main] (2) [below of=1] {$i$};
+    \node[main] (3) [right of=1] {$d$};
+    \node[main] (4) [below of=3] {$im$};
+
+    \draw[->] (1) -- (2);
+    \draw[->] (1) -- (4);
+    \draw[->] (2) -- (4);
+    \draw[->] (3) -- (4);
+
+    \end{tikzpicture}
+\end{document}
